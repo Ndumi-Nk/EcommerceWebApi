@@ -1,0 +1,101 @@
+﻿@model Ecommerce.Models.ReceiptViewModel
+
+@{
+    ViewData["Title"] = "Receipt";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Payment Receipt</h2>
+    <p class="text-center">Thank you for your purchase! Here’s your receipt.</p>
+
+    <div id="receipt" class="receipt mx-auto mt-4 p-4 bg-white rounded shadow" style="max-width: 800px; border: 1px solid #ddd;">
+        <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+            <h4>Order #@Model.Order.Id</h4>
+            <span>@Model.Order.OrderDate.ToString("dd MMM yyyy HH:mm")</span>
+        </div>
+
+        <p>Status: <span class="badge bg-success">@Model.Order.Status</span></p>
+
+        <h5 class="mt-4">Items</h5>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Order.OrderItems)
+                {
+                    <tr>
+                        <td>@item.Product.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Price.ToString("C")</td>
+                        <td>@((item.Price * item.Quantity).ToString("C"))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <h5 class="mt-4">Payment Details</h5>
+        <p>Card Holder: <strong>@Model.Payment.CardHolder</strong></p>
+        <p>Card Number: <strong>**** **** **** @Model.Payment.CardNumber.Substring(Model.Payment.CardNumber.Length - 4)</strong></p>
+        <p>Amount Paid: <strong>@Model.Payment.Amount.ToString("C")</strong></p>
+
+        <hr />
+        <h4 class="text-end">Total: @Model.Order.TotalAmount.ToString("C")</h4>
+    </div>
+
+    <!-- Print Receipt Section -->
+    <div class="text-center mt-4 mb-3">
+        <button class="btn btn-primary" onclick="printReceipt()">Print Receipt</button>
+    </div>
+
+    <!-- Continue Shopping Section -->
+    <div class="text-center mt-3">
+        <a class="btn btn-secondary" asp-controller="Home" asp-action="Index">Continue Shopping</a>
+    </div>
+</div>
+
+<style>
+    .receipt h4, .receipt h5 {
+        color: #333;
+    }
+
+    .receipt table th, .receipt table td {
+        vertical-align: middle;
+    }
+
+    .badge-success {
+        background-color: #28a745;
+    }
+
+    @@media print {
+        body *
+
+    {
+        visibility: hidden;
+    }
+
+    #receipt, #receipt * {
+        visibility: visible;
+    }
+
+    #receipt {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    }
+</style>
+
+<script>
+    function printReceipt() {
+        window.print();
+    }
+</script>

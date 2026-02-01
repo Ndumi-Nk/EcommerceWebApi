@@ -1,0 +1,70 @@
+﻿@model Ecommerce.Models.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_Layout"; // <- This sets the layout file
+}
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-4 fw-bold">Admin Dashboard</h1>
+        <p class="lead">Manage your platform efficiently and monitor key metrics</p>
+        <hr class="my-4">
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 text-center border-primary rounded-4">
+                <h5 class="card-title fw-bold">Total Users</h5>
+                <p class="display-6 text-primary">@Model.TotalUsers</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 text-center border-success rounded-4">
+                <h5 class="card-title fw-bold">Total Products</h5>
+                <p class="display-6 text-success">@Model.TotalProducts</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 text-center border-warning rounded-4">
+                <h5 class="card-title fw-bold">Total Orders</h5>
+                <p class="display-6 text-warning">@Model.TotalOrders</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card p-4 shadow-sm rounded-4">
+        <h4 class="fw-bold mb-3">Quick Actions</h4>
+        <div class="d-flex flex-wrap gap-3">
+            <a href="@Url.Action("Index", "Products")" class="btn btn-primary btn-lg">Manage Products</a>
+            <a href="@Url.Action("Orders", "Admin")" class="btn btn-success btn-lg">View Orders</a>
+            <a href="@Url.Action("Index", "Users")" class="btn btn-warning btn-lg">Manage Users</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+        }
+
+    .display-6 {
+        font-size: 2.5rem;
+    }
+
+    @@media (max-width: 768px) {
+        .d-flex.flex-wrap.gap-3
+
+    {
+        flex-direction: column;
+    }
+
+    }
+</style>

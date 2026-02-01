@@ -1,0 +1,195 @@
+﻿@model Ecommerce.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="register-container">
+    <div class="register-card">
+        <h2>Create an Account</h2>
+
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form" }))
+        {
+            @Html.AntiForgeryToken() <!-- Anti-forgery token -->
+
+            <div class="validation-summary">
+                @Html.ValidationSummary(true, "", new { @class = "error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email)
+                @Html.TextBoxFor(m => m.Email, new { placeholder = "Enter your email" })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.FullName)
+                @Html.TextBoxFor(m => m.FullName, new { placeholder = "John Doe" })
+                @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Password)
+                @Html.PasswordFor(m => m.Password, new { placeholder = "Enter password" })
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.ConfirmPassword)
+                @Html.PasswordFor(m => m.ConfirmPassword, new { placeholder = "Confirm password" })
+                @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "error" })
+            </div>
+
+            <button type="submit" class="btn-register">Register</button>
+        }
+
+        <div class="divider">OR</div>
+
+        @using (Html.BeginForm("GoogleLogin", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn-google">Continue with Google</button>
+        }
+
+        <p class="login-link">
+            Already have an account? <a href="@Url.Action("Login", "Account")">Login here</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" /> <!-- Enables client-side validation -->
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #007bff 0%, #00d4ff 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    .register-container {
+        width: 100%;
+        max-width: 400px;
+        padding: 20px;
+    }
+
+    .register-card {
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        text-align: center;
+        transition: transform 0.3s;
+    }
+
+    .register-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .register-card h2 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #555;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-group input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0,123,255,0.3);
+        outline: none;
+    }
+
+    .error {
+        color: #e74c3c;
+        font-size: 13px;
+    }
+
+    .validation-summary {
+        color: #e74c3c;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .btn-register, .btn-google {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-bottom: 10px;
+        transition: all 0.3s;
+    }
+
+    .btn-register {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-register:hover {
+        background-color: #0056b3;
+        transform: scale(1.02);
+    }
+
+    .btn-google {
+        background-color: #db4437;
+        color: white;
+    }
+
+    .btn-google:hover {
+        background-color: #a33226;
+        transform: scale(1.02);
+    }
+
+    .divider {
+        margin: 15px 0;
+        font-weight: 600;
+        color: #777;
+    }
+
+    .login-link {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    .login-link a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+
+    @@media (max-width: 500px) {
+        .register-card {
+            padding: 20px;
+        }
+    }
+</style>

@@ -1,0 +1,252 @@
+﻿@model Ecommerce.Models.HomeViewModel
+@using Ecommerce.Models
+@{
+    ViewData["Title"] = "Home";
+    Layout = "_Layout";
+}
+
+<div class="container mt-3">
+
+    <!-- Hero Section -->
+    <div class="hero-section text-center p-5 rounded-4 shadow-sm mb-5 position-relative">
+        <h1 class="display-4 fw-bold">Welcome to Ecommerce!</h1>
+        <p class="lead">Discover top-quality products at unbeatable prices.</p>
+        <p class="slogan">Shop safely, fast delivery, and 100% satisfaction guaranteed!</p>
+
+        @if (!Model.IsLoggedIn)
+        {
+            <div class="d-flex justify-content-center flex-wrap gap-2 mt-3">
+                <button class="btn btn-primary btn-lg"
+                        onclick="window.location.href='@Url.Action("Register", "Account")'">
+                    Register
+                </button>
+                <button class="btn btn-outline-light btn-lg"
+                        onclick="window.location.href='@Url.Action("Login", "Account")'">
+                    Login
+                </button>
+
+                @using (Html.BeginForm("GoogleLogin", "Account", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="provider" value="Google" />
+                    <input type="hidden" name="returnUrl" value="/" />
+                    <button type="submit" class="btn btn-danger btn-lg">Continue with Google</button>
+                }
+            </div>
+        }
+        else
+        {
+            <span class="text-light fw-bold">Welcome, @Model.UserName!</span>
+        }
+
+        <!-- Cart Icon -->
+        <button class="btn btn-outline-light position-absolute top-0 end-0 m-3" id="cart-toggle">
+            🛒 Cart (@Model.CartItems.Sum(c => c.Quantity))
+        </button>
+    </div>
+
+    <!-- Products Grid -->
+    <h2 class="text-center mb-4 fw-bold">All Products</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4 align-items-stretch">
+        @if (Model.Products.Any())
+        {
+            foreach (var product in Model.Products)
+            {
+                <div class="col d-flex">
+                    <div class="card shadow-sm product-card flex-fill">
+                        <div class="image-wrapper">
+                            <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? Url.Content("~/images/no-image.png") : product.ImageUrl)"
+                                 alt="@product.Name">
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold">@product.Name</h5>
+                            <p class="card-text flex-grow-1">@product.Description</p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <span class="text-primary fw-bold">@product.Price.ToString("C")</span>
+                            <a href="@Url.Action("AddToCart", "Cart", new { id = product.Id })" class="btn btn-sm btn-outline-primary">Add to Cart</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col">
+                <div class="alert alert-info text-center w-100">No products available at the moment.</div>
+            </div>
+        }
+    </div>
+
+    <!-- About Section -->
+    <div class="mt-5 text-center about-section p-5 rounded-4 shadow-sm">
+        <h3 class="fw-bold mb-3">Why Shop With Us?</h3>
+        <p class="lead">We offer top-quality products, secure checkout, and fast delivery. Customer satisfaction is our top priority!</p>
+    </div>
+</div>
+
+<!-- Shein-style Cart Drawer -->
+<div id="cart-drawer" class="cart-drawer shadow-lg">
+    <div class="cart-header d-flex justify-content-between align-items-center p-3 border-bottom">
+        <h5 class="mb-0">Your Cart</h5>
+        <button class="btn-close" id="cart-close"></button>
+    </div>
+    <div class="cart-body p-3">
+        @if (Model.CartItems.Any())
+        {
+            @foreach (var item in Model.CartItems)
+            {
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <img src="@(!string.IsNullOrEmpty(item.ImageUrl) ? item.ImageUrl : Url.Content("~/images/no-image.png"))"
+                         alt="@item.ProductName" width="60" height="60" class="me-2" />
+                    <div class="flex-grow-1">
+                        <div>@item.ProductName</div>
+                        <small>@item.Quantity x @item.Price.ToString("C")</small>
+                    </div>
+                    <a href="@Url.Action("Remove", "Cart", new { id = item.ProductId })" class="btn btn-sm btn-outline-danger">Remove</a>
+                </div>
+            }
+            <div class="fw-bold text-end border-top pt-2">
+                Total: @Model.CartItems.Sum(c => c.Price * c.Quantity).ToString("C")
+            </div>
+            <div class="text-end mt-3">
+                <a href="@Url.Action("Index", "Cart")" class="btn btn-primary">Checkout</a>
+            </div>
+        }
+        else
+        {
+            <div class="text-center text-muted mt-3">Your cart is empty.</div>
+        }
+    </div>
+</div>
+
+<style>
+    /* Cart Drawer */
+    .cart-drawer {
+        position: fixed;
+        top: 0;
+        right: -400px; /* hidden */
+        width: 350px;
+        height: 100%;
+        background-color: white;
+        z-index: 1050;
+        transition: right 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .cart-drawer.active {
+            right: 0;
+        }
+
+    .cart-header {
+        background-color: #f8f9fa;
+    }
+
+    .cart-body {
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #007bff, #00d4ff);
+        color: white;
+        border-radius: 1rem;
+        position: relative;
+        overflow: hidden;
+        padding: 5rem 1.5rem;
+    }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.2);
+            border-radius: 1rem;
+            pointer-events: none;
+        }
+
+        .hero-section h1, .hero-section p, .hero-section .slogan, .hero-section button, .hero-section span {
+            position: relative;
+            z-index: 1;
+        }
+
+    .slogan {
+        font-style: italic;
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Product Cards */
+    .product-card {
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s ease;
+    }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+        }
+
+    .card-text {
+        flex-grow: 1;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .image-wrapper {
+        width: 100%;
+        height: 220px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        background-color: #f8f9fa;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+    .about-section {
+        background-color: #f8f9fa;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .hero-section {
+            padding: 3rem 1rem;
+        }
+
+        .cart-drawer {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    const cartToggle = document.getElementById('cart-toggle');
+    const cartDrawer = document.getElementById('cart-drawer');
+    const cartClose = document.getElementById('cart-close');
+
+    cartToggle.addEventListener('click', () => {
+        cartDrawer.classList.add('active');
+    });
+
+    cartClose.addEventListener('click', () => {
+        cartDrawer.classList.remove('active');
+    });
+</script>

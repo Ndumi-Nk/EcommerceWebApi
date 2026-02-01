@@ -1,0 +1,106 @@
+﻿@model Ecommerce.Models.CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Checkout";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Checkout</h2>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    @using (Html.BeginForm("Index", "Checkout", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <!-- Payment Details -->
+            <div class="col-md-6">
+                <h4>Payment Information</h4>
+                <div class="mb-3">
+                    <label for="CardHolder" class="form-label">Cardholder Name</label>
+                    <input type="text" class="form-control" id="CardHolder" name="CardHolder"
+                           value="@Model.CardHolder" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="CardNumber" class="form-label">Card Number</label>
+                    <input type="text" class="form-control" id="CardNumber" name="CardNumber"
+                           value="@Model.CardNumber" maxlength="16" placeholder="1234 5678 9012 3456" required />
+                </div>
+
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <label for="ExpiryDate" class="form-label">Expiry Date</label>
+                        <input type="month" class="form-control" id="ExpiryDate" name="ExpiryDate"
+                               value="@(Model.ExpiryDate.ToString("yyyy-MM"))" required />
+                    </div>
+
+                    <div class="col-6 mb-3">
+                        <label for="CVV" class="form-label">CVV</label>
+                        <input type="text" class="form-control" id="CVV" name="CVV"
+                               value="@Model.CVV" maxlength="3" placeholder="123" required />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-md-6">
+                <h4>Order Summary</h4>
+                <div class="card p-3 shadow-sm">
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <div class="d-flex justify-content-between mb-2">
+                            <div>
+                                <strong>@item.ProductName</strong> x @item.Quantity
+                            </div>
+                            <div>
+                                @((item.Price * item.Quantity).ToString("C"))
+                            </div>
+
+                        </div>
+                    }
+                    <hr />
+                    <div class="d-flex justify-content-between fw-bold">
+                        <div>Total:</div>
+                        <div>@Model.CartItems.Sum(x => x.Price * x.Quantity).ToString("C")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary btn-lg">Pay Now</button>
+        </div>
+    }
+</div>
+
+<style>
+    .card {
+        border-radius: 12px;
+    }
+
+    input.form-control {
+        border-radius: 8px;
+    }
+
+    button.btn-primary {
+        background-color: #007bff;
+        border: none;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+    }
+
+        button.btn-primary:hover {
+            background-color: #0069d9;
+        }
+</style>
