@@ -1,0 +1,47 @@
+﻿@model Ecommerce.Models.AdminOrderDetailsViewModel
+
+@{
+    ViewData["Title"] = "Order Details";
+    Layout = "_Layout"; // <- This sets the layout file
+
+}
+
+
+<div class="container mt-5">
+    <h2>Order #@Model.Order.Id Details</h2>
+    <p>User: @Model.UserName (@Model.UserEmail)</p>
+    <p>Date: @Model.Order.OrderDate.ToString("dd MMM yyyy HH:mm")</p>
+    <p>Status: @Model.Order.Status</p>
+
+    <h4 class="mt-4">Items</h4>
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Order.OrderItems)
+            {
+                <tr>
+                    <td>@item.Product.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price.ToString("C")</td>
+                    <td>@((item.Price* item.Quantity).ToString("C"))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4 class="mt-4">Payment</h4>
+    <p>Card Holder: @Model.Payment?.CardHolder</p>
+    <p>Card Number: **** **** **** @Model.Payment?.CardNumber.Substring(Model.Payment.CardNumber.Length - 4)</p>
+    <p>Amount Paid: @Model.Payment?.Amount.ToString("C")</p>
+
+    <div class="d-flex gap-3 mt-3">
+        <a href="@Url.Action("Index", "Admin")" class="btn btn-secondary btn-lg">Back to Admin Dashboard</a>
+    </div>
+</div>

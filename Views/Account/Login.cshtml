@@ -1,0 +1,204 @@
+﻿@model Ecommerce.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="login-container">
+    <div class="login-card">
+        <h2>Login to Your Account</h2>
+
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "form" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="validation-summary">
+                @* Inline message for failed login *@
+                @if (ViewBag.LoginError != null)
+                {
+                    <span class="error">@ViewBag.LoginError</span>
+                }
+                @Html.ValidationSummary(true, "", new { @class = "error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email)
+                @Html.TextBoxFor(m => m.Email, new { placeholder = "Enter your email" })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Password)
+                @Html.PasswordFor(m => m.Password, new { placeholder = "Enter password" })
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "error" })
+            </div>
+
+            <div class="form-group checkbox-group">
+                @Html.CheckBoxFor(m => m.RememberMe)
+                @Html.LabelFor(m => m.RememberMe)
+            </div>
+
+            <button type="submit" class="btn-login">Login</button>
+        }
+
+        <div class="divider">OR</div>
+
+        @using (Html.BeginForm("GoogleLogin", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn-google">Continue with Google</button>
+        }
+
+        <p class="register-link">
+            Don't have an account? <a href="@Url.Action("Register", "Account")">Register here</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #007bff 0%, #00d4ff 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    .login-container {
+        width: 100%;
+        max-width: 400px;
+        padding: 20px;
+    }
+
+    .login-card {
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        text-align: center;
+        transition: transform 0.3s;
+    }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .login-card h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+    .form-group {
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"],
+        .form-group input[type="email"] {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0,123,255,0.3);
+            outline: none;
+        }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .error {
+        color: #e74c3c;
+        font-size: 13px;
+    }
+
+    .validation-summary {
+        color: #e74c3c;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .btn-login, .btn-google {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-bottom: 10px;
+        transition: all 0.3s;
+    }
+
+    .btn-login {
+        background-color: #007bff;
+        color: white;
+    }
+
+        .btn-login:hover {
+            background-color: #0056b3;
+            transform: scale(1.02);
+        }
+
+    .btn-google {
+        background-color: #db4437;
+        color: white;
+    }
+
+        .btn-google:hover {
+            background-color: #a33226;
+            transform: scale(1.02);
+        }
+
+    .divider {
+        margin: 15px 0;
+        font-weight: 600;
+        color: #777;
+    }
+
+    .register-link {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+        .register-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+            .register-link a:hover {
+                text-decoration: underline;
+            }
+
+    @@media (max-width: 500px) {
+        .login-card
+
+    {
+        padding: 20px;
+    }
+
+    }
+</style>

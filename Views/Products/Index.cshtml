@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Ecommerce.Models.Product>
+
+@{
+    ViewData["Title"] = "Manage Products";
+    Layout = "_Layout"; // <- This sets the layout file
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold">Products</h1>
+        <a href="@Url.Action("Create")" class="btn btn-primary btn-lg">Add New Product</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">No products available.</div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var product in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm product-card">
+                        <img src="@product.ImageUrl" class="card-img-top" style="height:220px; object-fit:cover;" alt="@product.Name" />
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">@product.Name</h5>
+                            <p class="card-text text-truncate">@product.Description</p>
+                            <p class="text-primary fw-bold">@product.Price.ToString("C")</p>
+                            <p class="text-muted">Stock: @product.StockQuantity</p>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="#" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .product-card {
+        border-radius: 12px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+        }
+
+    @@media (max-width: 768px) {
+        .row.row-cols-md-3
+
+    {
+        row-gap: 1.5rem;
+    }
+
+    }
+</style>

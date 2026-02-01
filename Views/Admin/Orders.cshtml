@@ -1,0 +1,55 @@
+﻿@model List<Ecommerce.Models.AdminOrdersViewModel>
+@{
+    ViewData["Title"] = "All Orders";
+    Layout = "_Layout"; // <- This sets the layout file
+
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">All Orders</h2>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="card-title mb-0">Order #@item.Order.Id</h5>
+                            <span class="badge @(item.Order.Status == "Paid" ? "bg-success" : "bg-warning")">
+                                @item.Order.Status
+                            </span>
+                        </div>
+
+                        <p class="mb-1"><strong>User Name:</strong> @item.UserName</p>
+                        <p class="mb-1"><strong>User ID / Email:</strong> @item.UserEmail</p>
+                        <p class="mb-1"><strong>Total:</strong> @item.Order.TotalAmount.ToString("C")</p>
+                        <p class="mb-1"><strong>Date:</strong> @item.Order.OrderDate.ToString("dd MMM yyyy HH:mm")</p>
+                        <p class="mb-1"><strong>Card:</strong> @(item.Payment != null ? "**** **** **** " + item.Payment.CardNumber.Substring(item.Payment.CardNumber.Length - 4) : "-")</p>
+
+                        <div class="d-flex gap-3 mt-3">
+                            <a href="@Url.Action("OrderDetails", "Admin", new { id = item.Order.Id })" class="btn btn-success btn-lg">
+                                View Order Details
+                            </a>
+
+                            <a href="@Url.Action("Index", "Admin")" class="btn btn-secondary btn-lg">Admin Dashboard</a>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+</style>
